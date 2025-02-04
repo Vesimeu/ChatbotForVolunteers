@@ -1,13 +1,16 @@
 import logging
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+
+from ChatbotForVolunteers.handlers.organizations import register_organization_handlers
 from config import BOT_TOKEN
 from database import init_db
-from handlers.start import register_start_handlers
 from handlers.events import register_events_handlers
-from handlers.volunteer import register_volunteer_handlers
-from handlers.feedback import register_feedback_handlers
-from handlers.admin import register_admin_handlers
+from ChatbotForVolunteers.handlers.start import register_start_handlers
+from ChatbotForVolunteers.handlers.participant import register_participant_handlers
+from ChatbotForVolunteers.handlers.volunteer import register_volunteer_handlers
+from ChatbotForVolunteers.handlers.organizer import register_organizer_handlers
+from ChatbotForVolunteers.handlers.feedback import register_feedback_handlers
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -18,12 +21,13 @@ storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
 # Регистрация обработчиков
-register_start_handlers(dp)
 register_events_handlers(dp)
 register_volunteer_handlers(dp)
+register_start_handlers(dp)
+register_participant_handlers(dp)
+register_organizer_handlers(dp)
 register_feedback_handlers(dp)
-register_admin_handlers(dp)
-
+register_organization_handlers(dp)
 async def on_startup(_):
     """
     Функция, которая выполняется при запуске бота.

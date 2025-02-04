@@ -12,8 +12,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./volunteer_bot.db
 
 # Создание асинхронного движка для работы с базой данных
 engine = create_async_engine(DATABASE_URL, echo=True)
-
-# Создание асинхронной фабрики сессий
+# # Создание асинхронной фабрики сессий
 AsyncSessionLocal = sessionmaker(
     bind=engine,
     class_=AsyncSession,

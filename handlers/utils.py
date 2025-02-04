@@ -17,13 +17,11 @@ volunteer_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(
 )
 
 organizer_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(
-    KeyboardButton("Создать мероприятие"),
-    KeyboardButton("Редактировать мероприятие"),
-    KeyboardButton("Удалить мероприятие"),
     KeyboardButton("Список мероприятий"),
+    KeyboardButton("Создать мероприятие"),
+    KeyboardButton("Удалить мероприятие"),
     KeyboardButton("Список организаций"),
     KeyboardButton("Создать организацию"),
-    KeyboardButton("Редактировать организацию"),
     KeyboardButton("Удалить организацию"),
 )
 

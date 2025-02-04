@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from datetime import datetime
-
+from ChatbotForVolunteers.database import get_db
 from ChatbotForVolunteers.service.event_service import (
     get_all_events, create_event, delete_event, get_event_by_id, update_event
 )
@@ -20,22 +20,32 @@ class EventState(StatesGroup):
     waiting_for_contact_info = State()
     waiting_for_volunteers_needed = State()
 
-
 async def show_events(message: types.Message):
     """
-    Обработчик для показа списка мероприятий.
+    Обработчик для показа списка мероприятий с подробной информацией.
     """
     events = await get_all_events()
 
-    if events:
-        response = "📅 Список мероприятий:\n"
-        for event in events:
-            response += f"🆔 {event.id} | {event.name} - {event.date.strftime('%Y-%m-%d %H:%M')}\n"
-    else:
-        response = "Мероприятий пока нет."
+    if not events:
+        await message.answer("❌ Мероприятий пока нет.")
+        return
+
+    response = "📅 **Список мероприятий:**\n\n"
+    for event in events:
+        organization_name = event.organization.name if event.organization else "Не указана"
+        response += (
+            f"🆔 **ID:** {event.id}\n"
+            f"📌 **Название:** {event.name}\n"
+            f"📅 **Дата:** {event.date.strftime('%Y-%m-%d %H:%M')}\n"
+            f"📍 **Место:** {event.location}\n"
+            f"📜 **Описание:** {event.description}\n"
+            f"📞 **Контакты:** {event.contact_info}\n"
+            f"👥 **Требуется волонтёров:** {event.volunteers_needed}\n"
+            f"🏢 **Организация:** {organization_name}\n"
+            "──────────────────────────\n"
+        )
 
     await message.answer(response)
-
 
 # 📌 Создание мероприятия
 async def start_create_event(message: types.Message):
@@ -121,23 +131,30 @@ async def process_event_contact_info(message: types.Message, state: FSMContext):
 
 
 async def process_event_volunteers_needed(message: types.Message, state: FSMContext):
+    """
+    Завершает создание мероприятия и сохраняет его в базу данных.
+    """
     async with state.proxy() as data:
         if not message.text.isdigit():
             await message.answer("⚠ Введите корректное число волонтёров.")
             return
         data["volunteers_needed"] = int(message.text)
 
+    async for session in get_db():  # ✅ Создаём асинхронную сессию
         event = await create_event(
+            session=session,  # ✅ Передаём сессию в функцию
             name=data["name"],
             date=data["date"],
             description=data["description"],
             location=data["location"],
             contact_info=data["contact_info"],
             volunteers_needed=data["volunteers_needed"],
+            organizer_id=message.from_user.id,  # ✅ Передаём ID организатора
             organization_id=data["organization_id"]
         )
 
-    await message.answer(f"✅ Мероприятие '{event.name}' успешно создано!")
+        await message.answer(f"✅ Мероприятие '{event.name}' успешно создано!")
+
     await state.finish()
 
 

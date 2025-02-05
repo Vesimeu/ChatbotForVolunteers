@@ -7,11 +7,11 @@ from handlers.organizations import register_organization_handlers
 from config import BOT_TOKEN
 from database import init_db
 from handlers.events import register_events_handlers
-from ChatbotForVolunteers.handlers.start import register_start_handlers
-from ChatbotForVolunteers.handlers.participant import register_participant_handlers, send_event_notifications
-from ChatbotForVolunteers.handlers.volunteer import register_volunteer_handlers
-from ChatbotForVolunteers.handlers.organizer import register_organizer_handlers
-from ChatbotForVolunteers.handlers.feedback import register_feedback_handlers
+from handlers.start import register_start_handlers
+from handlers.participant import register_participant_handlers, send_event_notifications
+from handlers.volunteer import register_volunteer_handlers
+from handlers.organizer import register_organizer_handlers
+from handlers.feedback import register_feedback_handlers
 from handlers.deleteuser import register_user_management_handlers
 
 # Настройка логирования

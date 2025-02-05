@@ -3,7 +3,6 @@ import logging
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from ChatbotForVolunteers.handlers.deleteuser import register_user_management_handlers
 from ChatbotForVolunteers.handlers.organizations import register_organization_handlers
 from config import BOT_TOKEN
 from database import init_db
@@ -13,6 +12,7 @@ from ChatbotForVolunteers.handlers.participant import register_participant_handl
 from ChatbotForVolunteers.handlers.volunteer import register_volunteer_handlers
 from ChatbotForVolunteers.handlers.organizer import register_organizer_handlers
 from ChatbotForVolunteers.handlers.feedback import register_feedback_handlers
+from handlers.deleteuser import register_user_management_handlers
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)

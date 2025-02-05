@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -7,7 +8,7 @@ from config import BOT_TOKEN
 from database import init_db
 from handlers.events import register_events_handlers
 from ChatbotForVolunteers.handlers.start import register_start_handlers
-from ChatbotForVolunteers.handlers.participant import register_participant_handlers
+from ChatbotForVolunteers.handlers.participant import register_participant_handlers, send_event_notifications
 from ChatbotForVolunteers.handlers.volunteer import register_volunteer_handlers
 from ChatbotForVolunteers.handlers.organizer import register_organizer_handlers
 from ChatbotForVolunteers.handlers.feedback import register_feedback_handlers
@@ -24,7 +25,7 @@ dp = Dispatcher(bot, storage=storage)
 register_events_handlers(dp)
 register_volunteer_handlers(dp)
 register_start_handlers(dp)
-register_participant_handlers(dp)
+register_participant_handlers(dp,bot)
 register_organizer_handlers(dp)
 register_feedback_handlers(dp)
 register_organization_handlers(dp)
@@ -34,6 +35,7 @@ async def on_startup(_):
     """
     await init_db()  # Инициализация базы данных
     logging.info("Бот запущен и база данных инициализирована.")
+    asyncio.create_task(send_event_notifications(bot))
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

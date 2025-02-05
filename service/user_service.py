@@ -34,6 +34,25 @@ async def is_user_subscribed(telegram_id: int) -> bool:
     user = await get_user_by_telegram_id(telegram_id)
     return user.subscribed if user else False
 
+async def get_subscribed_users():
+    """
+    Получает всех пользователей, подписанных на рассылку.
+    Возвращает список объектов User с `telegram_id`.
+    """
+    async for db in get_db():
+        async with db as session:
+            result = await session.execute(select(User).where(User.is_subscribed == True))
+            return result.scalars().all()
+
+async def get_subscribed_users_with_session(session):
+    """
+    Получает всех пользователей, подписанных на рассылку, с использованием переданной сессии.
+    Возвращает список объектов User с `telegram_id`.
+    """
+    result = await session.execute(select(User).where(User.subscribed == True))
+    return result.scalars().all()
+
+
 async def update_subscription_status(telegram_id: int, status: bool):
     """
     Обновляет статус подписки пользователя.

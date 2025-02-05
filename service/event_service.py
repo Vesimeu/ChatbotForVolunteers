@@ -15,6 +15,9 @@ async def get_all_events():
                 select(Event).options(joinedload(Event.organization))  # ✅ Загружаем `organization` сразу!
             )
             return result.scalars().all()
+async def get_all_events_with_session(session):
+    result = await session.execute(select(Event))
+    return result.scalars().all()
 async def get_event_by_id(event_id: int):
     """
     Получает мероприятие по ID.

@@ -6,7 +6,7 @@ from ChatbotForVolunteers.handlers.organizations import show_organizations
 from ChatbotForVolunteers.handlers.participant import subscribe_to_newsletter
 
 async def show_volunteer_chat(message: types.Message):
-    await message.answer("Присоединяйтесь к чату волонтёров: [ссылка на чат]")
+    await message.answer("Присоединяйтесь к чату волонтёров: [https://t.me/+koIOsJQvaww2YTQ6]")
 
 def register_volunteer_handlers(dp: Dispatcher):
     dp.register_message_handler(show_volunteer_chat, text="Общение с волонтёрами")

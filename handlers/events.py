@@ -2,11 +2,11 @@ from aiogram import types
 from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from datetime import datetime
-from ChatbotForVolunteers.database import get_db
-from ChatbotForVolunteers.service.event_service import (
+from database import get_db
+from service.event_service import (
     get_all_events, create_event, delete_event, get_event_by_id, update_event
 )
-from ChatbotForVolunteers.service.organization_service import get_all_organizations, get_organization_by_id
+from service.organization_service import get_all_organizations, get_organization_by_id
 
 
 # 📌 Состояния FSM для мероприятия

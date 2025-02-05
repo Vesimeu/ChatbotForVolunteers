@@ -2,9 +2,8 @@ from aiogram import types
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import ParseMode
 
-from ChatbotForVolunteers.database import get_db
-from ChatbotForVolunteers.models import User
-from ChatbotForVolunteers.service.user_service import get_user_by_telegram_id
+from database import get_db
+from service.user_service import get_user_by_telegram_id
 
 
 async def delete_user(message: types.Message):

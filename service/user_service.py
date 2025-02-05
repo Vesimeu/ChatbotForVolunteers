@@ -1,6 +1,6 @@
 from sqlalchemy.future import select
-from ChatbotForVolunteers.database import get_db
-from ChatbotForVolunteers.models import User
+from database import get_db
+from models import User
 
 async def get_user_by_telegram_id(telegram_id: int):
     """

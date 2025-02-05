@@ -1,8 +1,8 @@
 from aiogram import types
 from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from ChatbotForVolunteers.database import get_db
-from ChatbotForVolunteers.models import Feedback
+from database import get_db
+from models import Feedback
 
 class FeedbackState(StatesGroup):
     waiting_for_text = State()

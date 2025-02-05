@@ -2,9 +2,9 @@ from aiogram import types
 from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-from ChatbotForVolunteers.handlers.utils import organizer_keyboard
-from ChatbotForVolunteers.states import RegistrationState
-from ChatbotForVolunteers.service.user_service import get_user_by_telegram_id, create_user, update_user_role
+from handlers.utils import organizer_keyboard
+from states import RegistrationState
+from service.user_service import get_user_by_telegram_id, create_user, update_user_role
 
 # Клавиатура выбора роли
 role_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(
@@ -30,7 +30,7 @@ async def start_command(message: types.Message):
         await message.answer("Добро пожаловать! Выберите вашу роль:", reply_markup=role_keyboard)
         await RegistrationState.waiting_for_role.set()
     else:
-        from ChatbotForVolunteers.handlers.utils import get_keyboard_for_role
+        from handlers.utils import get_keyboard_for_role
         keyboard = get_keyboard_for_role(user.role)
         await message.answer("С возвращением! Чем могу помочь?", reply_markup=keyboard)
 
@@ -55,7 +55,7 @@ async def process_role_selection(message: types.Message, state: FSMContext):
         else:
             await update_user_role(message.from_user.id, role)
 
-            from ChatbotForVolunteers.handlers.utils import get_keyboard_for_role
+            from handlers.utils import get_keyboard_for_role
             keyboard = get_keyboard_for_role(role)
 
             await message.answer(f"Вы выбрали роль: {message.text}.", reply_markup=keyboard)

@@ -1,6 +1,6 @@
 from sqlalchemy.future import select
-from ChatbotForVolunteers.database import get_db
-from ChatbotForVolunteers.models import Feedback
+from database import get_db
+from models import Feedback
 
 async def save_feedback(user_id: int, message: str):
     """

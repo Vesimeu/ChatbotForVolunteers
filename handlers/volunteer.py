@@ -1,9 +1,9 @@
 from aiogram import types
 from aiogram.dispatcher import Dispatcher
 
-from ChatbotForVolunteers.handlers.events import show_events
-from ChatbotForVolunteers.handlers.organizations import show_organizations
-from ChatbotForVolunteers.handlers.participant import subscribe_to_newsletter
+from handlers.events import show_events
+from handlers.organizations import show_organizations
+from handlers.participant import subscribe_to_newsletter
 
 async def show_volunteer_chat(message: types.Message):
     await message.answer("Присоединяйтесь к чату волонтёров: [https://t.me/+koIOsJQvaww2YTQ6]")

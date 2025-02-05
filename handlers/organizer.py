@@ -1,10 +1,10 @@
 from aiogram import types
 from aiogram.dispatcher import Dispatcher
 
-from ChatbotForVolunteers.handlers.organizations import show_organizations, start_delete_organization
-from ChatbotForVolunteers.handlers.events import show_events, start_delete_event
-from ChatbotForVolunteers.service.user_service import get_user_by_telegram_id
-from ChatbotForVolunteers.handlers.utils import get_keyboard_for_role
+from handlers.organizations import show_organizations, start_delete_organization
+from handlers.events import show_events, start_delete_event
+from service.user_service import get_user_by_telegram_id
+from handlers.utils import get_keyboard_for_role
 
 
 async def organizer_panel(message: types.Message):

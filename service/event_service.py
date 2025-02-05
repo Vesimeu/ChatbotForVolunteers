@@ -2,8 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 
-from ChatbotForVolunteers.database import get_db
-from ChatbotForVolunteers.models import Event
+from database import get_db
+from models import Event
 
 async def get_all_events():
     """

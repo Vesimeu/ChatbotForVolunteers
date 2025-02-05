@@ -1,5 +1,5 @@
 from sqlalchemy.future import select
-from ..database import get_db
+from database import get_db
 from models import Organization
 
 async def create_organization(name: str, description: str, contact_info: str, website: str = None):

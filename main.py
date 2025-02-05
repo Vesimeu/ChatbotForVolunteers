@@ -3,6 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
+from ChatbotForVolunteers.handlers.deleteuser import register_user_management_handlers
 from ChatbotForVolunteers.handlers.organizations import register_organization_handlers
 from config import BOT_TOKEN
 from database import init_db
@@ -29,6 +30,7 @@ register_participant_handlers(dp,bot)
 register_organizer_handlers(dp)
 register_feedback_handlers(dp)
 register_organization_handlers(dp)
+register_user_management_handlers(dp)
 async def on_startup(_):
     """
     Функция, которая выполняется при запуске бота.

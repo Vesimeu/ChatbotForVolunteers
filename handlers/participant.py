@@ -8,6 +8,8 @@ from aiogram.utils.exceptions import ChatNotFound
 from sqlalchemy.testing.plugin.plugin_base import logging
 import logging
 from ChatbotForVolunteers.database import get_db
+from ChatbotForVolunteers.handlers.events import show_events
+from ChatbotForVolunteers.handlers.organizations import show_organizations
 from ChatbotForVolunteers.service.event_service import get_all_events,get_all_events_with_session
 from ChatbotForVolunteers.service.user_service import update_subscription_status, get_subscribed_users, get_subscribed_users_with_session
 
@@ -68,6 +70,6 @@ async def send_event_notifications(bot: Bot):
 def register_participant_handlers(dp: Dispatcher, bot_instance: Bot):
     global bot
     bot = bot_instance
-
-    dp.register_message_handler(get_all_events, text="Календарь мероприятий")
+    dp.register_message_handler(show_organizations, text="Информация про эко-организации")
+    dp.register_message_handler(show_events, text="Календарь мероприятий")
     dp.register_message_handler(subscribe_to_newsletter, text="Подписаться на рассылку")

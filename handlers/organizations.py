@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from ChatbotForVolunteers.service.organization_service import (
+from service.organization_service import (
     get_all_organizations, create_organization, delete_organization,
     get_organization_by_id, update_organization
 )

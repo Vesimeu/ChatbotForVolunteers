@@ -19,18 +19,25 @@ class OrganizationState(StatesGroup):
 
 async def show_organizations(message: types.Message):
     """
-    Обработчик для показа списка организаций.
+    Обработчик для показа списка организаций с описанием.
     """
     organizations = await get_all_organizations()
 
     if organizations:
-        response = "🌿 Список эко-организаций:\n"
+        response = "🌿 Список эко-организаций:\n\n"
         for org in organizations:
-            response += f"🆔 {org.id} | {org.name}\n🌍 {org.website if org.website else 'Нет сайта'}\n📞 {org.contact_info}\n\n"
+            response += (
+                f"🏛 <b>{org.name}</b>\n"
+                f"🆔 ID: {org.id}\n"
+                f"📝 <i>{org.description}</i>\n"
+                f"🌍 Сайт: {org.website if org.website else 'нет'}\n"
+                f"📞 Контакты: {org.contact_info}\n"
+                f"────────────────────\n\n"
+            )
     else:
-        response = "Пока нет информации об эко-организациях."
+        response = "❌ Пока нет зарегистрированных эко-организаций."
 
-    await message.answer(response)
+    await message.answer(response, parse_mode="HTML")
 
 
 # 📌 Создание организации

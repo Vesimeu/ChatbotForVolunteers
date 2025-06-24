@@ -7,6 +7,9 @@ from service.event_service import (
     get_all_events, create_event, delete_event, get_event_by_id, update_event
 )
 from service.organization_service import get_all_organizations, get_organization_by_id
+from service.user_service import get_user_by_telegram_id
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from service.volunteer_service import subscribe_volunteer_to_event, get_volunteers_for_event
 
 
 # 📌 Состояния FSM для мероприятия
@@ -22,19 +25,24 @@ class EventState(StatesGroup):
 
 async def show_events(message: types.Message):
     """
-    Обработчик для показа списка мероприятий с подробной информацией.
+    Обработчик для показа списка мероприятий с кнопками в зависимости от роли.
     """
+    user = await get_user_by_telegram_id(message.from_user.id)
+    if not user:
+        await message.answer("❌ Вы не зарегистрированы. Пожалуйста, введите /start.")
+        return
+
     events = await get_all_events()
 
     if not events:
         await message.answer("❌ Мероприятий пока нет.")
         return
 
-    response = "📅 **Список мероприятий:**\n\n"
+    await message.answer("📅 **Список актуальных мероприятий:**")
+
     for event in events:
         organization_name = event.organization.name if event.organization else "Не указана"
-        response += (
-            f"🆔 **ID:** {event.id}\n"
+        response = (
             f"📌 **Название:** {event.name}\n"
             f"📅 **Дата:** {event.date.strftime('%Y-%m-%d %H:%M')}\n"
             f"📍 **Место:** {event.location}\n"
@@ -42,10 +50,56 @@ async def show_events(message: types.Message):
             f"📞 **Контакты:** {event.contact_info}\n"
             f"👥 **Требуется волонтёров:** {event.volunteers_needed}\n"
             f"🏢 **Организация:** {organization_name}\n"
-            "──────────────────────────\n"
         )
 
-    await message.answer(response)
+        keyboard = InlineKeyboardMarkup()
+        if user.role == "volunteer":
+            keyboard.add(InlineKeyboardButton("✅ Записаться", callback_data=f"subscribe_event_{event.id}"))
+        elif user.role == "organizer":
+             keyboard.add(InlineKeyboardButton("👥 Список волонтеров", callback_data=f"list_volunteers_{event.id}"))
+
+        await message.answer(response, reply_markup=keyboard)
+
+
+async def subscribe_to_event_callback(callback_query: types.CallbackQuery):
+    """
+    Обрабатывает нажатие на кнопку 'Записаться'.
+    """
+    event_id = int(callback_query.data.split("_")[2])
+    user_id = callback_query.from_user.id
+
+    # Получаем user.id из нашей базы, а не telegram_id
+    user = await get_user_by_telegram_id(user_id)
+    if not user:
+        await callback_query.answer("❌ Ошибка: пользователь не найден.")
+        return
+
+    success = await subscribe_volunteer_to_event(user.id, event_id)
+
+    if success:
+        await callback_query.answer("✅ Вы успешно записались на мероприятие!")
+    else:
+        await callback_query.answer("ℹ️ Вы уже записаны на это мероприятие.", show_alert=True)
+
+
+async def list_volunteers_callback(callback_query: types.CallbackQuery):
+    """
+    Обрабатывает нажатие на кнопку 'Список волонтеров'.
+    """
+    event_id = int(callback_query.data.split("_")[2])
+    volunteers = await get_volunteers_for_event(event_id)
+
+    if not volunteers:
+        await callback_query.answer("👥 На это мероприятие еще никто не записался.", show_alert=True)
+        return
+
+    response = "👥 **Список волонтеров:**\n"
+    for user in volunteers:
+        response += f"- {user.username or f'User ID {user.telegram_id}'}\n"
+
+    await callback_query.message.answer(response)
+    await callback_query.answer()
+
 
 # 📌 Создание мероприятия
 async def start_create_event(message: types.Message):
@@ -140,6 +194,13 @@ async def process_event_volunteers_needed(message: types.Message, state: FSMCont
             return
         data["volunteers_needed"] = int(message.text)
 
+    # Получаем пользователя из БД, чтобы использовать внутренний ID
+    user = await get_user_by_telegram_id(message.from_user.id)
+    if not user:
+        await message.answer("❌ Ошибка: пользователь не найден. Попробуйте /start.")
+        await state.finish()
+        return
+
     async for session in get_db():  # ✅ Создаём асинхронную сессию
         event = await create_event(
             session=session,  # ✅ Передаём сессию в функцию
@@ -149,7 +210,7 @@ async def process_event_volunteers_needed(message: types.Message, state: FSMCont
             location=data["location"],
             contact_info=data["contact_info"],
             volunteers_needed=data["volunteers_needed"],
-            organizer_id=message.from_user.id,  # ✅ Передаём ID организатора
+            organizer_id=user.id,  # ✅ ИСПРАВЛЕНО: передаем ID из базы данных
             organization_id=data["organization_id"]
         )
 
@@ -212,3 +273,7 @@ def register_events_handlers(dp: Dispatcher):
     # Удаление мероприятия
     dp.register_message_handler(start_delete_event, text="Удалить мероприятие")
     dp.register_message_handler(process_delete_event, state=EventState.waiting_for_edit_id)
+
+    # Обработчики для инлайн-кнопок
+    dp.register_callback_query_handler(subscribe_to_event_callback, lambda c: c.data.startswith('subscribe_event_'))
+    dp.register_callback_query_handler(list_volunteers_callback, lambda c: c.data.startswith('list_volunteers_'))

@@ -2,16 +2,9 @@ from aiogram import types
 from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-from handlers.utils import organizer_keyboard
+from handlers.utils import organizer_keyboard, role_keyboard
 from states import RegistrationState
 from service.user_service import get_user_by_telegram_id, create_user, update_user_role
-
-# Клавиатура выбора роли
-role_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(
-    KeyboardButton("Участник"),
-    KeyboardButton("Волонтёр"),
-    KeyboardButton("Организатор")
-)
 
 # Клавиатура для ввода пароля
 password_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(

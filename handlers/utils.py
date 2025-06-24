@@ -1,5 +1,12 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
+# Клавиатура выбора роли
+role_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(
+    KeyboardButton("Участник"),
+    KeyboardButton("Волонтёр"),
+    KeyboardButton("Организатор")
+)
+
 # Клавиатуры
 participant_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(
     KeyboardButton("Календарь мероприятий"),
